@@ -28,3 +28,29 @@ router.post(
 
 //PUT /api/users/:id
 router.put(
+    '/:id',
+    [
+        body('username')
+        .trim()
+        .not()
+        .isEmpty()
+        .withMessage('Please enter your username.'),
+    ],
+    updateUser
+);
+
+//GET /api/users/all
+router.get('/all', getAllUsers);
+
+//GET /api/users/:id
+router.get('/:id', getUserById);
+
+//DELETE /api/users/:id
+router.delete('/:id', deleteUser);
+
+//Friend routes
+router.route('/:userId/friends/:friendId')
+    .post(addFriend)
+    .delete(removeFriend);
+
+    module.exports = router;
