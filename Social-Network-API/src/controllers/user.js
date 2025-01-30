@@ -153,3 +153,62 @@ res.status(status).json({ message: 'User deletion failed!', error });
             res.status(500).json({ message: 'Error adding friend', error });
         }
     }
+
+    async function removeFriend(req, res) {
+        try {
+            const { userId, friendId } = req.params;
+
+            if (!isValidObjectId(userId) || !isValidObjectId(friendId)) {
+                return res.status(400).json({ error: 'Invalid user ID' });
+            }
+
+            const user = await User.findById(userId);
+            const friend = await User.findById(friendId);
+
+            if (!user || !friend) {
+                return res.status(404).json({ error: 'User or friend not found' });
+            }
+
+            if (!user.friends.includes(friendId)) {
+                return res.status(400).json({ error: 'Friend not found' });
+            }
+
+            user.friends = user.friends.filter((f) => f.toString() !== friendId);
+            await user.save();
+
+            res.json({ message: 'Friend removed successfully', user });
+        } catch (error) {
+            console.error('Error removing friend:', error);
+            res.status(500).json({ message: 'Error removing friend', error });
+        }
+    }
+
+    async function getUserById(req, res) {
+        try {
+            const { id } = req.params;
+
+            if (!isValidObjectId(id)) {
+                return res.status(400).json({ error: 'Invalid user ID' });
+            }
+
+            const user = await User.findById(id).populate('thoughts').populate('friends');
+
+            if (!user) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+            res.json(user);
+            } catch (error) {
+                res.status(500).json({ message: 'Error getting user', error });
+            }
+        }
+
+        module.exports = {
+            createUser,
+            updateUser,
+            deleteUser,
+            getAllUsers,
+            addFriend,
+            removeFriend,
+            getUserById,
+        }
+    
