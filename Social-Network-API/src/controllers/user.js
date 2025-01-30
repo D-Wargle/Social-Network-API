@@ -85,3 +85,28 @@ async function updateUser(req, res) {
 		res.status(status).json({ message: 'User update failed!', error });
     }
 } 
+
+async function deleteUser(req, res) {
+    try {
+        const { id } = req.params;
+
+        if (!isValidObjectId(id)) {
+            return res.status(400).json({ error: 'Invalid user ID' });
+        }
+
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        // Delete user's thoughts
+        await Thought.deleteMany({ name: user.name });
+
+        // Delete user
+        await user.deleteOne();
+
+        res.json({ message: 'User deleted successfully!' });
+    } catch (error) {
+let status = error.statusCode || 500;
+res.status(status).json({ message: 'User deletion failed!', error });
+    }
+    };
