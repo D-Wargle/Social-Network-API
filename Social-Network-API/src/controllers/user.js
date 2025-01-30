@@ -110,3 +110,46 @@ let status = error.statusCode || 500;
 res.status(status).json({ message: 'User deletion failed!', error });
     }
     };
+
+    async function getAllUsers(req, res) {
+        try {
+            const users = await User.find().populate('thoughts').populate('friends');
+            res.json(users);
+        } catch (error) {
+            console.error('Error getting users:', error);
+            res.status(500).json({ message: 'Error getting users', error });
+        }
+    }
+
+    async function addFriend(req, res) {
+        try {
+            const { userId, friendId } = req.params;
+
+            if (!isValidObjectId(userId) || !isValidObjectId(friendId)) {
+                return res.status(400).json({ error: 'Invalid user ID' });
+            }
+
+            if (userId === friendId) {
+                return res.status(400).json({ error: 'Cannot add self as friend' });
+            }
+
+            const user = await User.findById(userId);
+            const friend = await User.findById(friendId);
+
+            if (!user || !friend) {
+                return res.status(404).json({ error: 'User or friend not found' });
+            }
+
+            if (user.friends.includes(friendId)) {
+                return res.status(400).json({ error: 'Friend already added' });
+            }
+
+            user.friends.push(friendId);
+            await user.save();
+
+            res.json({ message: 'Friend added successfully', user });
+        } catch (error) {
+            console.error('Error adding friend:', error);
+            res.status(500).json({ message: 'Error adding friend', error });
+        }
+    }
