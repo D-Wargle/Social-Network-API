@@ -38,3 +38,19 @@ async function getThoughtById(req, res) {
 		res.status(500).json(err);
 	}
 };
+
+//create new thought and add to user
+async function createThought(req, res) {
+    try {
+        const thought = await Thought.create(req.body);
+        //add thought reference to user
+        await User.findByIdAndUpdate(req.body.userId, {
+            $push: { thoughts: thought._id },
+        });
+        res.json(thought);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+}
+
+//delete thought and remove from user
