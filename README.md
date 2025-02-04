@@ -60,7 +60,7 @@ Import the provided Insomnia collection for API testing.
 
 ## Credits
 
-Credits: This project was created as part of a coding bootcamp challenge. - Sources and References: Portions of the code and guidance were provided with assistance from ChatGPT, Tutors, and my Instructors.
+Credits: This project was created as part of the OSU bootcamp with help from chatGPT, friends, and fellow classmates
 
 ## Walkthrough Video
 

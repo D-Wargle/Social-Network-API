@@ -23,8 +23,13 @@ app.get('/', (req, res) => {
     res.send('Welcome to the Social Network');
 });
 
+app.get('/test', (req, res) => {
+    res.send('Server is working!');
+  });
+  
+
 // start server
-app.listen(3000, () => {
+app.listen(3001, () => {
     console.log('Server has started');
 });
 
