@@ -1,7 +1,7 @@
 const User = require('../models/user');
 const { validationResult } = require('express-validator');
 const mongoose = require('mongoose');
-const Thought = require('../models/thought');
+const Thought = require('../models/thoughts');
 
 // Helper function to validate MongoDB ObjectIds
 function isValidObjectId(id) {

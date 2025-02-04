@@ -3,7 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const api = require('./routes/api');
+const api = require('./src/routes/api');
 
 // Initialize Express app
 const app = express();

@@ -1,83 +1,82 @@
 const mongoose = require('mongoose');
-const Schema = mondgoose.Schema;
+const Schema = mongoose.Schema;
 
-//reaction schema
+// Reaction Schema (subdocument schema)
 const reactionSchema = new Schema(
-    {
-        //unique identifier
-        reactionId: {
-            type: Schema.Types.ObjectId,
-            default: () => new mongoose.Types.ObjectId(),
-        },
-        //reaction contents
-        reactionBody: {
-            type: String,
-            required: true,
-            maxlength: 280,
-        },
-        //user of the reaction
-        name: {
-            type: String,
-            required: true,
-        },
-        //timestamp
-        createdAt: {
-            type: Date,
-            default: Date.now,
-            get: (timestamp) => dateFormat(timestamp),
-        },
-    },
-    {
-        toJSON: {
-            getters: true,
-        },
-        id: false,
-    }
+	{
+		// Unique identifier for each reaction
+		reactionId: {
+			type: Schema.Types.ObjectId,
+			default: () => new mongoose.Types.ObjectId(),
+		},
+		// Content of the reaction, limited to 280 characters
+		reactionBody: {
+			type: String,
+			required: true,
+			maxLength: 280,
+		},
+		// User who created the reaction
+		username: {
+			type: String,
+			required: true,
+		},
+		// Timestamp with getter for formatting
+		createdAt: {
+			type: Date,
+			default: Date.now,
+			get: (timestamp) => dateFormat(timestamp),
+		},
+	},
+	{
+		toJSON: {
+			getters: true,
+		},
+		id: false,
+	}
 );
 
-
-// Thought Schema
-const ThoughtSchema = new Schema(
-    {
-        //thought contents
-        thoughtText: {
-            type: String,
-            required: 'Please enter your thought',
-            minlength: 1,
-            maxlength: 300,
-        },
-        //timestamp
-        createAt: {
-            type: Date,
-            default: Date.now,
-            get: (timestamp) => dateFormat(timestamp),
-        },
-        //user of the thought
-        name: {
-            type: String,
-            required: true,
-        },
-        //reactions
-        reactions: [reactionSchema],
-    },
-    {
-        toJSON: {
-            virtuals: true,
-            getters: true,
-        },
-        id: false,
-    }
+// Main Thought Schema
+const thoughtSchema = new Schema(
+	{
+		// Content of the thought, between 1-280 characters
+		thoughtText: {
+			type: String,
+			required: true,
+			minLength: 1,
+			maxLength: 280,
+		},
+		// Timestamp with formatting
+		createdAt: {
+			type: Date,
+			default: Date.now,
+			get: (timestamp) => dateFormat(timestamp),
+		},
+		// User who created the thought
+		username: {
+			type: String,
+			required: true,
+		},
+		// Array of nested reaction documents
+		reactions: [reactionSchema],
+	},
+	{
+		toJSON: {
+			virtuals: true,
+			getters: true,
+		},
+		id: false,
+	}
 );
 
-//helper for timestamps
+// Helper function to format timestamps
 function dateFormat(timestamp) {
-    return new Date(timestamp).toLocaleString();
-};
+	return new Date(timestamp).toLocaleString();
+}
 
-//virtual for reaction count
-ThoughtSchema.virtual('reactionCount').get(function() {
-    return this.reactions.length;
+// Virtual to count reactions
+thoughtSchema.virtual('reactionCount').get(function () {
+	return this.reactions.length;
 });
 
-const Thought = mongoose.model('Thought', ThoughtSchema);
+const Thought = mongoose.model('Thought', thoughtSchema);
 module.exports = Thought;
